@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const cors = require('cors');
 
 const DB_PATH = process.env.DATABASE_PATH || path.join(__dirname, 'data.sqlite');
@@ -40,7 +40,7 @@ function authenticateToken(req, res, next) {
 app.post('/api/auth/signup', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'email and password required' });
-  const hash = await bcrypt.hash(password, 10);
+  const hash = bcrypt.hashSync(password, 10);
   db.run(`INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)`, [email, hash, name || null], function(err) {
     if (err) return res.status(400).json({ error: 'Email already used' });
     const user = { id: this.lastID, email };
@@ -57,7 +57,7 @@ app.post('/api/auth/login', (req, res) => {
   db.get(`SELECT id, email, password_hash, name FROM users WHERE email = ?`, [email], async (err, row) => {
     if (err) return res.status(500).json({ error: 'db error' });
     if (!row) return res.status(400).json({ error: 'invalid credentials' });
-    const ok = await bcrypt.compare(password, row.password_hash);
+    const ok = bcrypt.compareSync(password, row.password_hash);
     if (!ok) return res.status(400).json({ error: 'invalid credentials' });
     const user = { id: row.id, email: row.email, name: row.name };
     const token = jwt.sign(user, JWT_SECRET, { expiresIn: '7d' });
