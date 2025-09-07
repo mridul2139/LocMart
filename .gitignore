@@ -1,0 +1,42 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Builds
+/dist/
+/build/
+/.cache/
+/.parcel-cache/
+/.turbo/
+/.next/
+
+# Env
+.env
+.env.*
+server/.env
+server/.env.local
+frontend/.env
+frontend/.env.local
+
+# SQLite DB
+server/*.sqlite
+server/*.sqlite-journal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vite
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+logs
+*.log
+
+# Misc
+.vercel
+.render
